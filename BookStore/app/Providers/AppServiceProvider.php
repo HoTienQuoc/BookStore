@@ -27,5 +27,8 @@ class AppServiceProvider extends ServiceProvider
 
         // Model::preventLazyLoading(! $this->app->isProduction());
 
+        // Model::preventSilentlyDiscardingAttributes($this->app->isLocal());
+
+
     }
 }

@@ -9,7 +9,14 @@ use Illuminate\Notifications\Notifiable;
 
 use Laravel\Sanctum\HasApiTokens;
 
+use App\Models\Scopes\AncientScope;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 
+
+use Illuminate\Database\Eloquent\Builder;
+
+
+#[ScopedBy([AncientScope::class])]
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -47,5 +54,41 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * The "booted" method of the model.
+     */
+    protected static function booted(): void
+    {
+        static::addGlobalScope(new AncientScope);
+    }
+
+    /**
+     * The "booted" method of the model.
+     */
+    // protected static function booted(): void
+    // {
+    //     static::addGlobalScope('ancient', function (Builder $builder) {
+    //         $builder->where('created_at', '<', now()->subYears(2000));
+    //     });
+    // }
+
+    /**
+     * Scope a query to only include popular users.
+     */
+    // #[Scope]
+    protected function popular(Builder $query): void
+    {
+        $query->where('votes', '>', 100);
+    }
+ 
+    /**
+     * Scope a query to only include active users.
+     */
+    // #[Scope]
+    protected function active(Builder $query): void
+    {
+        $query->where('active', 1);
     }
 }
